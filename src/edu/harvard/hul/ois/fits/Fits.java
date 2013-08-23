@@ -175,8 +175,6 @@ public class Fits {
 	}
 	
 	public static void main(String[] args) throws FitsException, IOException, ParseException, XMLStreamException {
-		Fits fits = new Fits();
-		
 		Options options = new Options();
 		options.addOption("i",true, "input file or directory");
 		options.addOption("r",false,"process directories recursively when -i is a directory ");
@@ -194,7 +192,7 @@ public class Fits {
 		CommandLine cmd = parser.parse(options, args);
 		
 		if(cmd.hasOption("h")) {
-			fits.printHelp(options);
+			printHelp(options);
 			System.exit(0);
 		}
 		if(cmd.hasOption("v")) {
@@ -217,16 +215,18 @@ public class Fits {
 				if(outputDir == null || !(new File(outputDir).isDirectory())) {
 					throw new FitsException("When FITS is run in directory processing mode the output location must be a diretory");
 				}
+				Fits fits = new Fits();
 				fits.doDirectory(inputFile,new File(outputDir),cmd.hasOption("x"),cmd.hasOption("xc"));
 			}
 			else {
+				Fits fits = new Fits();
 				FitsOutput result = fits.doSingleFile(inputFile);
 				fits.outputResults(result,cmd.getOptionValue("o"),cmd.hasOption("x"),cmd.hasOption("xc"),false);
 			}
 		}
 		else {
 			System.err.println("Invalid CLI options");
-			fits.printHelp(options);
+			printHelp(options);
 			System.exit(-1);
 		}
 	    
@@ -398,7 +398,7 @@ public class Fits {
 		}
 	}
 	
-	private void printHelp(Options opts) {
+	private static void printHelp(Options opts) {
 		HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp("fits", opts );
 	}
