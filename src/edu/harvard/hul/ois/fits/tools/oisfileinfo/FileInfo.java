@@ -90,15 +90,17 @@ public class FileInfo extends ToolBase {
 		size.setText(String.valueOf(file.length()));
 		fileInfo.addContent(size);		
 		//Calculate the MD5 checksum
-		try {
-			String md5Hash = MD5.asHex(MD5.getHash(new File(file.getPath())));
-			Element signature = new Element("md5checksum",fitsNS);
-			signature.setText(md5Hash);
-			fileInfo.addContent(signature);
-		} catch (IOException e) {
-		    logger.error("Could not calculate the MD5 for "+file.getPath() + 
-		            ": " + e.getClass().getName());
-			throw new FitsToolException("Could not calculate the MD5 for "+file.getPath(),e);
+		if (Fits.config.getBoolean("output.enable-checksum")) {
+			try {
+				String md5Hash = MD5.asHex(MD5.getHash(new File(file.getPath())));
+				Element signature = new Element("md5checksum",fitsNS);
+				signature.setText(md5Hash);
+				fileInfo.addContent(signature);
+			} catch (IOException e) {
+			    logger.error("Could not calculate the MD5 for "+file.getPath() + 
+			            ": " + e.getClass().getName());
+				throw new FitsToolException("Could not calculate the MD5 for "+file.getPath(),e);
+			}
 		}
 		//fslastmodified
 		Element fslastmodified = new Element("fslastmodified",fitsNS);
